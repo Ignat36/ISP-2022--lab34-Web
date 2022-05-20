@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 import requests
+from datetime import datetime
+from app.models import NewsItem
 
 # Create your views here.
 def index(request):
@@ -11,14 +13,29 @@ def index(request):
     description = []
     image = []
     url = []
-    
+    author = []
+    published_at = []
+
+    for i in NewsItem.objects.all():
+        title.append(i.title)
+        description.append(i.description)
+        image.append(i.image)
+        url.append(i.url)
+        author.append(i.author)
+        url.append(i.url)
+        published_at.append(i.date_posted)
+
     for i in data:
         title.append(i['title'])
         description.append(i['description'])
         image.append(i['image'])
         url.append(i['url'])
+        author.append(i['author'])
+        published_at.append(datetime.fromisoformat(i['published_at']))
     
-    news = zip(title, description, image, url)
+    
+    
+    news = zip(title, description, image, url, author, published_at)
     # news = [(t1,d1,i1,u1), (t2,d2,i2,u2)]
 
     return render(request, 'app/index.html', {'news': news})
