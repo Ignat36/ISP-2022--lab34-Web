@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (ListView, 
                                   DetailView, 
@@ -9,46 +9,8 @@ from django.views.generic import (ListView,
                                  )
 import requests
 from datetime import datetime
-from app.models import NewsItem
-
-# Create your views here.
-def index(request):
-    r = requests.get('http://api.mediastack.com/v1/news?access_key=07f04176b5cab9b8543438d76220d466&countries=ru,us&languages=ru')
-    result = r.json()
-    data = result['data']
-    title = []
-    description = []
-    image = []
-    url = []
-    author = []
-    published_at = []
-
-    for i in NewsItem.objects.all():
-        title.append(i.title)
-        description.append(i.description)
-        image.append(i.image)
-        url.append(i.url)
-        author.append(i.author)
-        url.append(i.url)
-        published_at.append(i.date_posted)
-
-    for i in data:
-        title.append(i['title'])
-        description.append(i['description'])
-        image.append(i['image'])
-        url.append(i['url'])
-        author.append(i['author'])
-        published_at.append(datetime.fromisoformat(i['published_at']))
-    
-    
-    context = {
-        'news': NewsItem.objects.all()
-    }
-    
-    news = zip(title, description, image, url, author, published_at)
-    # news = [(t1,d1,i1,u1), (t2,d2,i2,u2)]
-
-    return render(request, 'app/index.html', context)
+from app.models import NewsItem, Tag
+from django.contrib.auth.models import User
 
 
 class NewsListView(ListView):
@@ -59,13 +21,25 @@ class NewsListView(ListView):
     paginate_by = 9
 
 
+class TagNewsListView(ListView):
+    model = NewsItem
+    template_name: str = 'app/tag_news.html'
+    context_object_name = 'news'
+    ordering = ['-date_posted']
+    paginate_by = 9
+
+    def get_queryset(self):
+        tag = get_object_or_404(Tag, tag_name=self.kwargs.get('tag_name'))
+        return tag.newsitem_set.all()
+
+
 class NewsDetailView(DetailView):
     model = NewsItem
 
 
 class NewsCreateView(LoginRequiredMixin, CreateView):
     model = NewsItem
-    fields = ('title', 'description', 'url', 'image')
+    fields = ('title', 'description', 'url', 'image', 'tags')
 
 
     def form_valid(self, form):
@@ -77,12 +51,13 @@ class NewsCreateView(LoginRequiredMixin, CreateView):
         form = super().get_form(form_class)
         form.fields['url'].required = False
         form.fields['image'].required = False
+        form.fields['tags'].required = False
         return form
 
 
 class NewsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = NewsItem
-    fields = ('title', 'description', 'url', 'image')
+    fields = ('title', 'description', 'url', 'image', 'tags')
 
 
     def form_valid(self, form):
@@ -99,6 +74,7 @@ class NewsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         form = super().get_form(form_class)
         form.fields['url'].required = False
         form.fields['image'].required = False
+        form.fields['tags'].required = False
         return form
 
 class NewsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
