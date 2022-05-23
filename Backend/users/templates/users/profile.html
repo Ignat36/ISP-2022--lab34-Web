@@ -51,7 +51,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav">
-            <a class="nav-item nav-link" href="{% url 'news-index' %}">Home</a>
+              <a class="nav-item nav-link" href="{% url 'news-index' %}">Home</a>
+            </div>
+
+            <div class="navbar-nav ms-auto">
+                <a class="nav-item nav-link" href="{% url 'news-create' %}">Post News</a>
+                <a class="nav-item nav-link" href="{% url 'logout' %}">Log out</a>
             </div>
         </div>
       </div>
@@ -83,7 +88,17 @@
                         </div>
                     </div>
                 </div>
-                <!-- FORM HERE -->
+                <form method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <fieldset class=""form-group>
+                      <legend class="border-bottom mb-4">Profile Info</legend>
+                      {{ user_form|crispy }}
+                      {{ prof_form|crispy }}
+                  </fieldset>
+                  <div class="form-group">
+                      <button class="btn btn-outline-info" type="submit">Update</button>
+                  </div>
+              </form>
             </div>
         </div>
         <div class="col-md-4">
