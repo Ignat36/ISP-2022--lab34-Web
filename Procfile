@@ -1,0 +1,1 @@
+web: gunicorn ISP-2022--lab34-Web.wsgi
