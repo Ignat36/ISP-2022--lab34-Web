@@ -7,8 +7,8 @@ from django.views.generic import (ListView,
                                   UpdateView,
                                   DeleteView
                                  )
+from numpy import imag
 import requests
-from datetime import datetime
 from app.models import NewsItem, Tag
 from django.contrib.auth.models import User
 
@@ -20,17 +20,40 @@ class NewsListView(ListView):
     ordering = ['-date_posted']
     paginate_by = 9
 
+    def get_queryset(self):
+        
+        r = requests.get('http://api.mediastack.com/v1/news?access_key=07f04176b5cab9b8543438d76220d466&countries=ru,us&languages=ru')
+        result = r.json()
+        data = result['data']
+
+        admin = User.objects.filter(username='admin').first()
+        for i in data:
+            
+            if(i['image'] == None): 
+                i['image'] = ''
+
+            if NewsItem.objects.filter(title=i['title']).count() == 0:
+                news = NewsItem(
+                    title=i['title'],
+                    description=i['description'], 
+                    image=i['image'], 
+                    url=i['url'],
+                    author=admin
+                    )
+                news.save()
+                
+
+        return super().get_queryset()
 
 class TagNewsListView(ListView):
     model = NewsItem
     template_name: str = 'app/tag_news.html'
     context_object_name = 'news'
-    ordering = ['-date_posted']
     paginate_by = 9
 
     def get_queryset(self):
         tag = get_object_or_404(Tag, tag_name=self.kwargs.get('tag_name'))
-        return tag.newsitem_set.all()
+        return tag.newsitem_set.all().order_by('-date_posted')
 
 
 class NewsDetailView(DetailView):
