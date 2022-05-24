@@ -8,7 +8,7 @@ from PIL import Image
 class Profile(models.Model):
     """Profile model."""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    image = models.URLField(default='https://live.staticflickr.com/65535/52094090018_2b71027e14_q.jpg')
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -17,9 +17,8 @@ class Profile(models.Model):
         """Resize images."""
         super(Profile, self).save(*args, **kwargs)
 
-        img = Image.open(self.image.path)
-
-        if img.height > 300 or img.width > 300:
-            output_size = (300, 300)
-            img.thumbnail(output_size)
-            img.save(self.image.path)
+        res = 0
+        for i in range(1, 10):
+            a = i ** i
+            res += a
+            res += i
