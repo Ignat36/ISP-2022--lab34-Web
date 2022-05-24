@@ -7,7 +7,6 @@ from django.views.generic import (ListView,
                                   UpdateView,
                                   DeleteView
                                  )
-from numpy import imag
 import requests
 from app.models import NewsItem, Tag
 from django.contrib.auth.models import User
