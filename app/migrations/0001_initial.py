@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             name='NewsItem',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100)),
-                ('description', models.CharField(max_length=1000)),
+                ('title', models.CharField(max_length=3000)),
+                ('description', models.CharField(max_length=5000)),
                 ('image', models.URLField()),
                 ('url', models.URLField()),
                 ('date_posted', models.DateTimeField(auto_now_add=True)),

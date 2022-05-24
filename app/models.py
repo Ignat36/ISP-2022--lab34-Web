@@ -17,8 +17,8 @@ class Tag(models.Model):
 
 class NewsItem(models.Model):
     """Implements all required fields for storing news in data base."""
-    title = models.CharField(max_length=100)
-    description = models.CharField(max_length=1000)
+    title = models.CharField(max_length=3000)
+    description = models.CharField(max_length=5000)
     image = models.URLField(default='')
     url = models.URLField(default='')
     date_posted =models.DateTimeField(auto_now_add=True)
