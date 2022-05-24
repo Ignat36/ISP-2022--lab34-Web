@@ -6,6 +6,7 @@ from django.urls import reverse
 # Create your models here.
 
 class Tag(models.Model):
+    """Store tags with many to many relationship with NewsItem."""
     tag_name = models.CharField(max_length=100)
 
     class Meta:
@@ -29,4 +30,5 @@ class NewsItem(models.Model):
 
     
     def get_absolute_url(self):
+        """Return absolute url to this news page."""
         return reverse('news-detail', kwargs={'pk': self.pk})

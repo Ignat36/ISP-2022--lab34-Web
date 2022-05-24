@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
 
 class UserRegisterForm(UserCreationForm):
-    
+    """Registration form by django."""
     email = forms.EmailField()
 
     class Meta:
@@ -16,7 +16,7 @@ class UserRegisterForm(UserCreationForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-
+    """Update form by django."""
     email = forms.EmailField()
 
     class Meta:
@@ -27,7 +27,7 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-
+    """Profile update form by django."""
     class Meta:
         model = Profile
         fields = ['image']
