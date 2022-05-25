@@ -40,7 +40,7 @@ class NewsListView(ListView):
                     url=i['url'],
                     author=admin
                     )
-                news.save()
+                # news.save()
                 
 
         return super().get_queryset()
