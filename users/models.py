@@ -8,7 +8,7 @@ from PIL import Image
 class Profile(models.Model):
     """Profile model."""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.URLField(default='https://live.staticflickr.com/65535/52094090018_2b71027e14_q.jpg')
+    image = models.URLField(default='https://live.staticflickr.com/65535/52094090018_2b71027e14_q.jpg', max_length=1000)
 
     def __str__(self):
         return f'{self.user.username} Profile'
