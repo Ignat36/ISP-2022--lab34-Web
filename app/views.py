@@ -26,6 +26,7 @@ class NewsListView(ListView):
         result = r.json()
         data = result['data']
 
+        # into dao
         admin = User.objects.filter(username='admin').first()
         for i in data:
             
@@ -41,10 +42,11 @@ class NewsListView(ListView):
                     author=admin
                     )
                 # news.save()
+                # salary
                 
 
         return super().get_queryset()
-
+# UseCase execute all services
 class TagNewsListView(ListView):
     """Show news with choosen tag."""
     model = NewsItem

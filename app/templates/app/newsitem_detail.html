@@ -42,7 +42,7 @@
  <header class="site-header">
   <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
     <div class="container">
-      <a class="navbar-brand me-4" href="">Django Blog</a>
+      <a class="navbar-brand me-4" href="">News</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
       </button>
@@ -57,7 +57,6 @@
             <a class="nav-item nav-link" href="{% url 'logout' %}">Log out</a>
             <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
           {% else %}
-            <a class="nav-item nav-link" href="admin/">Admin</a> 
             <a class="nav-item nav-link" href="{% url 'login' %}">Log in</a>
             <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
           {% endif %}
