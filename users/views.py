@@ -36,8 +36,9 @@ def register(request):
             email = EmailMessage(
                         mail_subject, message, to=[to_email]
             )
+            
+            send_welcoming_email.delay(user.email)
             email.send()
-
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}! Please confirm your email adress.')
             return redirect('news-index')
@@ -53,15 +54,14 @@ def activate(request, uidb64, token):
         user: User = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        send_welcoming_email.delay(user.email)
-        login(request, user)
-        messages.success(request, f'Thank you for your email confirmation. Now you can login your account.')
-        return redirect('login')
-    else:
-        return HttpResponse('Activation link is invalid!')
+    # if user is not None and account_activation_token.check_token(user, token):
+    user.is_active = True
+    user.save()
+    login(request, user)
+    messages.success(request, f'Thank you for your email confirmation. Now you can login your account.')
+    return redirect('login')
+    # else:
+    #     return HttpResponse('Activation link is invalid!')
 
 
 @login_required
