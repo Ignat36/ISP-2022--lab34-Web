@@ -33,7 +33,7 @@ def successful_registration(user: User, current_site) -> None:
             mail_subject, message, to=[to_email]
     )
 
-    send_welcoming_email.delay(user.email)
+    # send_welcoming_email.delay(user.email)
     email.send()
 
 
