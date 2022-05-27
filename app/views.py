@@ -10,7 +10,7 @@ from django.views.generic import (ListView,
 import requests
 from app.models import NewsItem, Tag
 from django.contrib.auth.models import User
-
+from .services.news_service import update_db_with_api
 
 class NewsListView(ListView):
     """Show main page with all news stored in database."""
@@ -22,30 +22,11 @@ class NewsListView(ListView):
 
     def get_queryset(self):
         """Overrided function that return query set of its models. Make request to mediastack api and add everything new to database."""
-        r = requests.get('http://api.mediastack.com/v1/news?access_key=07f04176b5cab9b8543438d76220d466&countries=ru,us&languages=ru')
-        result = r.json()
-        data = result['data']
-
-        # into dao
-        admin = User.objects.filter(username='admin').first()
-        for i in data:
-            
-            if(i['image'] == None): 
-                i['image'] = ''
-
-            if NewsItem.objects.filter(title=i['title']).count() == 0:
-                news = NewsItem(
-                    title=i['title'],
-                    description=i['description'], 
-                    image=i['image'], 
-                    url=i['url'],
-                    author=admin
-                    )
-                # news.save()
-                # salary
+        
+        # update_db_with_api()
                 
-
         return super().get_queryset()
+
 # UseCase execute all services
 class TagNewsListView(ListView):
     """Show news with choosen tag."""

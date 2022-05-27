@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+
+from users.services.reqistration_service import successful_registration, account_acrivation, profile_update
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.core.mail import EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -20,25 +22,11 @@ def register(request):
 
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-            current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
-            message = render_to_string('users/acc_active_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                'token':account_activation_token.make_token(user),
-            })
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(
-                        mail_subject, message, to=[to_email]
+            successful_registration(
+                form.save(commit=False),
+                get_current_site(request)
             )
-            
-            send_welcoming_email.delay(user.email)
-            email.send()
+
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}! Please confirm your email adress.')
             return redirect('news-index')
@@ -49,19 +37,14 @@ def register(request):
 
 
 def activate(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user: User = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    # if user is not None and account_activation_token.check_token(user, token):
-    user.is_active = True
-    user.save()
-    login(request, user)
-    messages.success(request, f'Thank you for your email confirmation. Now you can login your account.')
-    return redirect('login')
-    # else:
-    #     return HttpResponse('Activation link is invalid!')
+    user = account_acrivation(uidb64, token)
+
+    if user is not None:
+        login(request, user)
+        messages.success(request, f'Thank you for your email confirmation. Now you can login your account.')
+        return redirect('login')
+    else:
+        return HttpResponse('Activation link is invalid!')
 
 
 @login_required
@@ -75,8 +58,7 @@ def profile(request):
                                       instance=request.user.profile)
 
         if user_form.is_valid() and prof_form.is_valid():
-            user_form.save()
-            prof_form.save()
+            profile_update(user_form, prof_form)
             messages.success(request, f'Your account has been updated!')
             return redirect('profile')
         
