@@ -18,7 +18,7 @@ from .daos.profile_dao import ProfileDAO
 
 def successful_registration(user: User, current_site) -> None:
     """Registration view, save form if valid."""
-    user.is_active = False
+    user.is_active = True
     us_dao = UserDAO()
     us_dao.save(user)
     mail_subject = 'Activate your blog account.'
@@ -33,7 +33,7 @@ def successful_registration(user: User, current_site) -> None:
             mail_subject, message, to=[to_email]
     )
 
-    # send_welcoming_email.delay(user.email)
+    send_welcoming_email.delay(user.email)
     email.send()
 
 
@@ -44,13 +44,15 @@ def account_acrivation(uidb64, token) -> User:
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+
+        us_dao = UserDAO()
+        us_dao.update(user)
+
+        return user
     
-    user.is_active = True
-
-    us_dao = UserDAO()
-    us_dao.update(user)
-
-    return user
+    return None
 
 def profile_update(user, profile):
     us_dao = UserDAO()

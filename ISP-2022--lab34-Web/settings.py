@@ -21,8 +21,6 @@ CELERY_TIMEZONE = "Australia/Tasmania"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
@@ -33,25 +31,22 @@ CELERY_CACHE_BACKEND = 'django-cache'
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-6p_51*hd4r(t9za10+!3=al_c!xl+yr#6mhg6^6kdvhun2psph'
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'django-insecure-6p_51*hd4r(t9za10+!3=al_c!xl+yr#6mhg6^6kdvhun2psph'
+# SECRET_KEY = os.environ.get('SECRET_KEY')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-# EMAIL_HOST_USER = 'sharignat9@gmail.com'
-# EMAIL_HOST_PASSWORD = 'mmzgkjtdaxkygpln'
+# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = 'sharignat9@gmail.com'
+EMAIL_HOST_PASSWORD = 'mmzgkjtdaxkygpln'
 EMAIL_PORT = 587
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG') == 'True'
-# DEBUG = True
+# DEBUG = os.environ.get('DEBUG') == 'True'
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    'newspetproject.herokuapp.com',
-    '127.0.0.1'
-]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -102,11 +97,18 @@ WSGI_APPLICATION = 'ISP-2022--lab34-Web.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.environ.get("SQL_USER", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
 
 
 # Password validation
@@ -161,4 +163,4 @@ MEDIA_URL = '/media/'
 
 DEFAULT_ROMA = 'https://live.staticflickr.com/65535/52094090018_2b71027e14_q.jpg'
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())

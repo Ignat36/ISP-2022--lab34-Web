@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+rm -f './celerybeat.pid'
+celery -A ISP-2022--lab34-Web beat -l INFO

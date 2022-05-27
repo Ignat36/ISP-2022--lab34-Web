@@ -23,10 +23,9 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             successful_registration(
-                form.save(commit=False),
+                form.save(commit=True),
                 get_current_site(request)
             )
-
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}! Please confirm your email adress.')
             return redirect('news-index')

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+worker_ready() {
+    celery -A ISP-2022--lab34-Web inspect ping
+}
+
+until worker_ready; do
+  >&2 echo 'Celery workers not available'
+  sleep 1
+done
+>&2 echo 'Celery workers is available'
+
+celery -A ISP-2022--lab34-Web  \
+    --broker="${CELERY_BROKER}" \
+    flower

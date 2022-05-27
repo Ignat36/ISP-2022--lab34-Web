@@ -23,7 +23,7 @@ class NewsListView(ListView):
     def get_queryset(self):
         """Overrided function that return query set of its models. Make request to mediastack api and add everything new to database."""
         
-        # update_db_with_api()
+        update_db_with_api()
                 
         return super().get_queryset()
 
