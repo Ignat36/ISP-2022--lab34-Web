@@ -44,15 +44,13 @@ def account_acrivation(uidb64, token) -> User:
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-
-        us_dao = UserDAO()
-        us_dao.update(user)
-
-        return user
     
-    return None
+    user.is_active = True
+
+    us_dao = UserDAO()
+    us_dao.update(user)
+
+    return user
 
 def profile_update(user, profile):
     us_dao = UserDAO()
